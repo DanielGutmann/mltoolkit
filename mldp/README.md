@@ -1,7 +1,6 @@
 # Machine Learning Data Pipeline (MLDP) #
 
-This repository contains a module for **parallel**, **real-time data processing** for machine learning purposes.
-Essentially, it provides an infrastructure for efficient parallel data processing for models development. A data pipeline can be understood as a sequence of computational steps that are applied to data-chunks that are read progressively (opposed to reading all data to the main memory at once), as shown below. The final output of the data pipeline are data-chunks (batches) in a desired format, which will depend on a model at hand.
+This repository contains a module for **parallel** and **real-time data processing** for machine learning (ML) purposes. It provides the backbone to perform data transformations to train and evaluate ML models. A data pipeline can be understood as a sequence of computational steps that are applied to data-chunks that are read progressively (opposed to reading all data to the main memory at once), as shown below. The final output of the data pipeline are data-chunks (batches) in a desired format, which will depend on a model at hand.
 
 <img src="img/mldp.png"/>
 
@@ -14,6 +13,9 @@ Finally, a need for experiments reproducibility is considered by **documentation
 
 It is similar to the Tensorflow's and PyTorch's data pipeline. The main difference, however, is that the main focus of this module is on re-usability of computational steps instead of provision of the computational framework for parallel processing.
 
+The module was fully tested with **Python 3.6.9**.
+
+
 ## MLDP main features ##
 
 * Parallel data processing.
@@ -22,19 +24,6 @@ It is similar to the Tensorflow's and PyTorch's data pipeline. The main differen
 * A set of implemented steps that can be used out-of-the-box for data processing, such as a csv reader, vocabulary mapper, padder, and token processor.
 
 The module does not provide an exhaustive set of computational steps, and a user has a complete freedom to write own steps in Python, and use any extra libraries that he might wish.
-
-## Installation ##
-
-<!--```python-->
-<!--pip install machine-learning-data-pipeline-->
-<!--```-->
-
-Clone the repository, and from its root directory run:
-```python
-pip install .
-```
-
-It was fully tested with Python 3.6.9
 
 ## Usage ##
 
@@ -55,19 +44,20 @@ token_processor = TokenProcessor(fnames="tweets",
                                  lower_case=True)
 padder = Padder(fname="tweets", new_mask_fname="tweets_mask", pad_symbol="<PAD>")
 
-# creating the pipeline
+# creating a pipeline object and attaching the steps
 pipeline = Pipeline(reader=csv_reader, worker_processes_num=1)
 pipeline.add_step(fields_selector)
 pipeline.add_step(token_processor)
 pipeline.add_step(padder)
 
-# iterate over data chunks
+# iterating over data-chunks
 for data_chunk in pipeline.iter(data_path=data_path):
     pass
 
-# generate documentation and print it
+# generating the blue-print (documentation) and printing it
 print(pipeline)
 ```
+Here, we create the **Pipeline** object that gets three steps attached that perform a transformation of the initial tweets stored on the local storage device.
 
 ### Implementation of custom steps ###
 
@@ -77,8 +67,7 @@ Please remember that all steps are required to output data-chunks in the **inter
 
 ### Tutorials ###
 
-For a more detailed presentation of the module's features and applications, please refer to the <a href="/tutorials">tutorials folder</a>.
-Please note that the tutorial is slightly outdated.
+For a more detailed presentation of the module's features and applications, please refer to the <a href="/tutorials">tutorials folder</a>. Please note that the tutorial is **slightly outdated**.
 
 ## Main principles ##
 
@@ -92,10 +81,9 @@ Please note that the tutorial is slightly outdated.
 
 ### Intermediate format ###
 
-The MLDP suggests the format of data-chunks that travel along the pipeline to be specific objects. Essentially, they contain **dictionaries of lists or numpy arrays** of arbitrary dtypes and shapes, except the first dimension corresponding to the values chunk size. The main argument behind the decision is the code re-usability of steps that assume the format.
+A **Pipeline** object expects the format of flowing data-chunks to be of the **DataChunk** class. They corresponding objects essentially contain **dictionaries** mapping to lists or numpy arrays. The main argument behind the decision is the code re-usability of steps that assume the format of the dictionary values. Nevertheless, the format is not restricted, and one can use an arbitrary data type for the dictionary values.
 
-Data-chunks have **fnames** (dict keys) corresponding to data attributes (e.g. "text_ids", "texts", "labels"). And **fvalues** (dict values) corresponding to data-unit values, for example the actual *text ids* or *text* strings.
-Nevertheless, the format is not restricted, and one can use an arbitrary data type for **fvalues**.
+More specifically, data-chunks have **fnames** (dict keys) corresponding to data attributes (e.g. "text_id", "text", "label"). And **fvalues** (dict values) corresponding to data-unit values, for example the actual *text ids*, or *text* strings.
 
 An example data-chunk for machine translation is shown below.
 
