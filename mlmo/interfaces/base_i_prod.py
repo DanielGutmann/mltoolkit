@@ -1,0 +1,2 @@
+class BaseIProd(object):
+    pass
