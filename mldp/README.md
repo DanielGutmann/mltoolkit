@@ -1,7 +1,7 @@
 # Machine Learning Data Pipeline (MLDP) #
 
 This repository contains a module for **parallel**, **real-time data processing** for machine learning purposes.
-Essentially, it provides an infrastructure for efficient parallel data processing for models **development (training, testing)**, and **production**. A data pipeline can be understood as a sequence of computational steps that are applied to data-chunks that are read progressively (opposed to reading all data to the main memory at once), as shown below. The final output of the data pipeline are data-chunks (batches) in a desired format, which will depend on a model at hand.
+Essentially, it provides an infrastructure for efficient parallel data processing for models development. A data pipeline can be understood as a sequence of computational steps that are applied to data-chunks that are read progressively (opposed to reading all data to the main memory at once), as shown below. The final output of the data pipeline are data-chunks (batches) in a desired format, which will depend on a model at hand.
 
 <img src="img/mldp.png"/>
 
@@ -16,14 +16,12 @@ It is similar to the Tensorflow's and PyTorch's data pipeline. The main differen
 
 ## MLDP main features ##
 
-* Highly scalable data processing on multi-core CPU architectures.
+* Parallel data processing.
 * Automatic documentation generation of data pipelines and individual steps.
-* Code reusability of computational steps (agnostic to an input data format).
-* Ease of custom steps integration to the module.
-* Complete independence of other machine learning libraries, such as TensorFlow.
+* Independence of other machine learning libraries, such as TensorFlow.
 * A set of implemented steps that can be used out-of-the-box for data processing, such as a csv reader, vocabulary mapper, padder, and token processor.
 
-The module does not provide an exhaustive set of computational steps, and a user has a complete freedom to write own steps in a pure Python, and use any extra libraries that he might wish.
+The module does not provide an exhaustive set of computational steps, and a user has a complete freedom to write own steps in Python, and use any extra libraries that he might wish.
 
 ## Installation ##
 
@@ -73,7 +71,7 @@ print(pipeline)
 
 ### Implementation of custom steps ###
 
-In order to implement custom steps, the user has to extend base classes of a desired step. For example, to write a custom reader, the user needs to extend **BaseReader** from **mldp/steps/readers/base_reader.py**.
+In order to implement custom steps, the user has to extend the base class of a desired step's type. For example, to write a custom reader, the user needs to extend **BaseReader** from **mldp/steps/readers/base_reader.py**.
 
 Please remember that all steps are required to output data-chunks in the **intermediate format** as explained below.
 
@@ -89,8 +87,7 @@ Please note that the tutorial is slightly outdated.
 1. **Readers** - fetch data from a remote or local storage and convert it to the intermediate data-chunk format (dict of numpy arrays). E.g., CSV files or JSON readers.
 2. **Transformers** - transform field values of data-chunks or create new data-chunk fields. E.g. a Padder that makes all sequences to be of the same length.
 3. **Formatters** - convert the intermediate data-chunk format to a project specific data format. E.g. steps that convert to pandas data-frames or tuples (features, labels).
-4. **General**  - a special case steps, at the moment only the data chunk size adjuster that allows to change the size of data-chunks in the middle of a pipeline.
-5. **Preprocessing** - while preprocessing is not the main focus of the module, steps of this kind allow to perform data alteration and caching for multiple subsequent re-use during processing steps execution. For example, a step of this kind could pre-load remote data, or perform some data cleaning. Operations in this step are usually necessary to execute only once, then save the result, and use it for processing runs without re-execution of the step.
+5. **Preprocessors** - while preprocessing is not the main focus of the module, steps of this kind allow to perform data alteration and caching for multiple subsequent re-use during processing steps execution. For example, a step of this kind could pre-load remote data, or perform some data cleaning. Operations in this step are usually necessary to execute only once, then save the result, and use it for processing runs without re-execution of the step.
 
 
 ### Intermediate format ###
