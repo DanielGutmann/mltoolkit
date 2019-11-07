@@ -9,6 +9,10 @@ They cover two main aspects: data processing and the actual modelling.
 
 For more information about specific submodules, please refer to the corresponding folders.
 
+# Python
+
+Supports Python 3, and was teste with Python 3.6.9 
+
 ## License ##
 
 MIT
